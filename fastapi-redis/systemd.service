@@ -1,0 +1,13 @@
+[Unit]
+Description=FastAPI Redis Cluster Application
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/fastapi-redis
+Environment="PATH=/home/ubuntu/fastapi-redis/venv/bin"
+ExecStart=/home/ubuntu/fastapi-redis/venv/bin/gunicorn -c gunicorn_config.py main:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
