@@ -97,20 +97,20 @@ pulumi.export("redisSecurityGroupId", redis_security_group.id)
 ami_id = "ami-01811d4912b4ccb26"  # Ubuntu 24.04 LTS
 
 # Create a Node.js Instance in the first subnet (ap-southeast-1a)
-nodejs_instance = aws.ec2.Instance("nodejs-instance",
+fastapi_instance = aws.ec2.Instance("fastapi-instance",
     instance_type="t2.micro",
     vpc_security_group_ids=[redis_security_group.id],
     ami=ami_id,
     subnet_id=public_subnet1.id,
-    key_name="MyKeyPair2",  # Update with your key pair
+    key_name="MyKeyPair4",  # Update with your key pair
     associate_public_ip_address=True,
     tags={
-        "Name": "nodejs-instance",
+        "Name": "fastapi-instance",
         "Environment": "Development",
         "Project": "RedisSetup"
     })
-pulumi.export("nodejsInstanceId", nodejs_instance.id)
-pulumi.export("nodejsInstancePublicIp", nodejs_instance.public_ip)  # Output Node.js public IP
+pulumi.export("fastapiInstanceId", fastapi_instance.id)
+pulumi.export("fastapiInstancePublicIp", fastapi_instance.public_ip)  # Output Node.js public IP
 
 # Helper function to create Redis instances
 def create_redis_instance(name, subnet_id):
@@ -119,7 +119,7 @@ def create_redis_instance(name, subnet_id):
         vpc_security_group_ids=[redis_security_group.id],
         ami=ami_id,
         subnet_id=subnet_id,
-        key_name="MyKeyPair2",  # Update with your key pair
+        key_name="MyKeyPair4",  # Update with your key pair
         associate_public_ip_address=True,
         tags={
             "Name": name,
@@ -155,23 +155,33 @@ pulumi.export("redisInstance6Id", redis_instance6.id)
 pulumi.export("redisInstance6PublicIp", redis_instance6.public_ip)
 pulumi.export("redisInstance6PrivateIp", redis_instance6.private_ip)
 
-
-  + redisInstance1PrivateIp: "10.0.2.182"
-  ~ redisInstance1PublicIp : "10.0.2.182" => "13.250.12.204"
-    redisInstance2Id       : "i-0730040501bef3fb8"
-  + redisInstance2PrivateIp: "10.0.2.16"
-  ~ redisInstance2PublicIp : "10.0.2.16" => "13.215.46.122"
-    redisInstance3Id       : "i-0bf9406c505adaf3d"
-  + redisInstance3PrivateIp: "10.0.2.13"
-  ~ redisInstance3PublicIp : "10.0.2.13" => "18.139.117.129"
-    redisInstance4Id       : "i-0dfc84a58a21b6306"
-  + redisInstance4PrivateIp: "10.0.3.131"
-  ~ redisInstance4PublicIp : "10.0.3.131" => "18.140.98.188"
-    redisInstance5Id       : "i-0bfd49e5466753af4"
-  + redisInstance5Privatep : "10.0.3.115"
-  ~ redisInstance5PublicIp : "10.0.3.115" => "13.214.152.47"
-    redisInstance6Id       : "i-06c0e957854f9a596"
-  + redisInstance6PrivateIp: "10.0.3.95"
-  ~ redisInstance6PublicIp : "10.0.3.95" => "18.142.161.58"
-    redisSecurityGroupId   : "sg-07be23746912d5adc"
-    vpcId                  : "vpc-00a2faa99f72cb855"
+"""
+Outputs:
+    fastapiInstanceId      : "i-06a6ab30a05072579"
+    fastapiInstancePublicIp: "13.250.15.202"
+    igwId                  : "igw-0b6cf6001852b7258"
+    publicRouteTableId     : "rtb-0f0d0a1da786d1363"
+    publicSubnet1Id        : "subnet-0079f722f34b72544"
+    publicSubnet2Id        : "subnet-0aaec29574b6c9413"
+    publicSubnet3Id        : "subnet-0592cee06294ef5ec"
+    redisInstance1Id       : "i-01c99eae268faa1e7"
+    redisInstance1PrivateIp: "10.0.2.5"
+    redisInstance1PublicIp : "47.129.44.128"
+    redisInstance2Id       : "i-057679bdb4d54ac43"
+    redisInstance2PrivateIp: "10.0.2.208"
+    redisInstance2PublicIp : "54.169.82.0"
+    redisInstance3Id       : "i-0f99bdbd8a2226bb8"
+    redisInstance3PrivateIp: "10.0.2.186"
+    redisInstance3PublicIp : "54.251.178.164"
+    redisInstance4Id       : "i-0eac3cadcdd6ade49"
+    redisInstance4PrivateIp: "10.0.3.53"
+    redisInstance4PublicIp : "13.212.226.119"
+    redisInstance5Id       : "i-074bf3a4c6f0a7dcd"
+    redisInstance5Privatep : "10.0.3.149"
+    redisInstance5PublicIp : "18.138.233.156"
+    redisInstance6Id       : "i-051c2c9ad230b7c2a"
+    redisInstance6PrivateIp: "10.0.3.83"
+    redisInstance6PublicIp : "47.128.234.202"
+    redisSecurityGroupId   : "sg-04f8a5d351b4b5e33"
+    vpcId                  : "vpc-0f93dc7ddfa5632d9
+"""

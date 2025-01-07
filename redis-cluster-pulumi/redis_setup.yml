@@ -1,0 +1,44 @@
+- name: Automate Redis Installation and Configuration
+  hosts: redis_nodes
+  become: yes
+
+  tasks:
+    - name: Update package manager (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Redis
+      ansible.builtin.apt:
+        name: redis-server
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure redis-server is started
+      ansible.builtin.systemd:
+        name: redis-server
+        state: started
+
+    - name: Ensure redis-server is enabled at boot
+      ansible.builtin.systemd:
+        name: redis-server
+        enabled: yes
+
+    - name: Configure Redis
+      ansible.builtin.lineinfile:
+        path: /etc/redis/redis.conf
+        regexp: '^{{ item.option }}'
+        line: "{{ item.option }} {{ item.value }}"
+        state: present
+      with_items:
+        - { option: "bind", value: "0.0.0.0" }
+        - { option: "protected-mode", value: "no" }
+        - { option: "cluster-enabled", value: "yes" }
+        - { option: "cluster-config-file", value: "nodes.conf" }
+        - { option: "cluster-node-timeout", value: "5000" }
+        - { option: "appendonly", value: "yes" }
+
+    - name: Restart Redis service
+      ansible.builtin.systemd:
+        name: redis-server
+        state: restarted
