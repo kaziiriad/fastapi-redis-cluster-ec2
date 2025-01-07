@@ -8,12 +8,12 @@ app = FastAPI(title="Redis Cluster API")
 
 # Redis Cluster configuration
 startup_nodes = [
-    {"host": "redis1-private-ip", "port": 6379},
-    {"host": "redis2-private-ip", "port": 6379},
-    {"host": "redis3-private-ip", "port": 6379},
-    {"host": "redis4-private-ip", "port": 6379},
-    {"host": "redis5-private-ip", "port": 6379},
-    {"host": "redis6-private-ip", "port": 6379}
+    {"host": "10.0.2.5", "port": 6379},
+    {"host": "10.0.2.208", "port": 6379},
+    {"host": "10.0.2.186", "port": 6379},
+    {"host": "10.0.3.53", "port": 6379},
+    {"host": "10.0.3.149", "port": 6379},
+    {"host": "10.0.3.83", "port": 6379}
 ]
 
 # Initialize Redis Cluster

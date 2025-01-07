@@ -1,0 +1,63 @@
+---
+- name: Deploy FastAPI Application to EC2
+  hosts: redis_nodes
+  become: yes
+  vars:
+    app_name: "fastapi-app"
+    app_dir: "/home/ubuntu/{{ app_name }}"
+    app_file: "main.py"  # Replace with your FastAPI app file name if different
+
+  tasks:
+    - name: Update the package manager
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install Python and required packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - git
+        state: present
+
+    - name: Create virtual environment for FastAPI
+      command:
+        cmd: python3 -m venv {{ app_dir }}/venv
+        creates: "{{ app_dir }}/venv"
+
+    - name: Install FastAPI and Uvicorn
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ app_dir }}/venv"
+        state: present
+      notify:
+        - Upload FastAPI Application
+
+    - name: Upload FastAPI application to EC2
+      copy:
+        src: "./{{ app_file }}"
+        dest: "{{ app_dir }}/{{ app_file }}"
+
+    - name: Ensure FastAPI app is running
+      command: "{{ app_dir }}/venv/bin/uvicorn {{ app_name }}:app --host 0.0.0.0 --port 80 --reload"
+      args:
+        chdir: "{{ app_dir }}"
+      async: 600
+      poll: 0
+      register: fastapi_process
+
+    - name: Wait for FastAPI app to start
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: 80
+        delay: 10
+        timeout: 60
+
+  handlers:
+    - name: Upload FastAPI Application
+      copy:
+        src: ./{{ app_file }}
+        dest: "{{ app_dir }}/{{ app_file }}"
